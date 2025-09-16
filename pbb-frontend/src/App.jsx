@@ -145,7 +145,7 @@ function App() {
         <div className="px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 flex items-center justify-center">
+              <div className="w-25 h-25 flex items-center justify-center">
                 <img
                   src="/images/gbvs_logo.png"
                   alt="GBVS Logo"
@@ -160,14 +160,14 @@ function App() {
               </div>
             </div>
             <div className="hidden md:flex items-center space-x-4">
-              <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-yellow-400 shadow-lg">
+              <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-yellow-400 shadow-lg">
                 <img
                   src="/images/gurudev.jpg"
                   alt="Gurudev"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-yellow-400 shadow-lg">
+              <div className="w-30 h-30 rounded-full overflow-hidden border-2 border-yellow-400 shadow-lg">
                 <img
                   src="/images/radha_krishna.png"
                   alt="Radha Krishna"
@@ -246,7 +246,7 @@ function App() {
 
             {/* Mission Section */}
             <div>
-              <h3 className="text-xl font-bold mb-4 text-yellow-400">Mission</h3>
+              <h3 className="text-xl font-bold mb-4 text-yellow-400">Pure Bhakti Base Mission</h3>
               <p className="text-gray-300 leading-relaxed">
                 To serve as a spiritual companion to devotees by offering intelligent access to Śrīla Gurudev's books and insights, enabling personalized, immersive, and multilingual learning experiences rooted in Gaudiya Vaishnava tradition.
               </p>
@@ -256,7 +256,7 @@ function App() {
           {/* Copyright */}
           <div className="border-t border-gray-700 mt-8 pt-6 text-center">
             <p className="text-gray-400">
-              © 2024 Gokul Bhajan & Vedic Studies. All rights reserved.
+              © 2025 Gokul Bhajan & Vedic Studies. All rights reserved.
             </p>
           </div>
         </div>
