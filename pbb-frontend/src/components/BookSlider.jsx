@@ -41,16 +41,94 @@ const BookSlider = ({ books, loading, error, onBookSelect, selectedBookId, onRet
     return book.original_book_title || book.english_book_title || book.title || book.name || `Book ${getBookId(book) || 'Unknown'}`;
   };
 
-  // Group books by first letter
+  // Function to normalize transliterated characters to their base English letters
+  const normalizeToEnglishLetter = (char) => {
+    // Handle common Sanskrit/Hindi transliteration characters and international diacritics
+    const charMap = {
+      // A variations
+      'Ā': 'A', 'À': 'A', 'Á': 'A', 'Â': 'A', 'Ã': 'A', 'Ä': 'A', 'Å': 'A', 'Ą': 'A', 'Ă': 'A', 'Ȧ': 'A', 'Ạ': 'A', 'Ả': 'A', 'Ấ': 'A', 'Ầ': 'A', 'Ẩ': 'A', 'Ẫ': 'A', 'Ậ': 'A', 'Ắ': 'A', 'Ằ': 'A', 'Ẳ': 'A', 'Ẵ': 'A', 'Ặ': 'A',
+      'ā': 'A', 'à': 'A', 'á': 'A', 'â': 'A', 'ã': 'A', 'ä': 'A', 'å': 'A', 'ą': 'A', 'ă': 'A', 'ȧ': 'A', 'ạ': 'A', 'ả': 'A', 'ấ': 'A', 'ầ': 'A', 'ẩ': 'A', 'ẫ': 'A', 'ậ': 'A', 'ắ': 'A', 'ằ': 'A', 'ẳ': 'A', 'ẵ': 'A', 'ặ': 'A',
+      // B variations
+      'Ḃ': 'B', 'Ḅ': 'B', 'Ḇ': 'B',
+      'ḃ': 'B', 'ḅ': 'B', 'ḇ': 'B',
+      // C variations
+      'Ć': 'C', 'Ĉ': 'C', 'Ċ': 'C', 'Č': 'C', 'Ç': 'C',
+      'ć': 'C', 'ĉ': 'C', 'ċ': 'C', 'č': 'C', 'ç': 'C',
+      // D variations
+      'Ḍ': 'D', 'Ḏ': 'D', 'Ḑ': 'D', 'Ḓ': 'D', 'Ď': 'D', 'Đ': 'D',
+      'ḍ': 'D', 'ḏ': 'D', 'ḑ': 'D', 'ḓ': 'D', 'ď': 'D', 'đ': 'D',
+      // E variations
+      'Ē': 'E', 'Ĕ': 'E', 'Ė': 'E', 'Ę': 'E', 'Ě': 'E', 'È': 'E', 'É': 'E', 'Ê': 'E', 'Ë': 'E',
+      'ē': 'E', 'ĕ': 'E', 'ė': 'E', 'ę': 'E', 'ě': 'E', 'è': 'E', 'é': 'E', 'ê': 'E', 'ë': 'E',
+      // G variations
+      'Ḡ': 'G', 'Ģ': 'G', 'Ĝ': 'G', 'Ğ': 'G', 'Ġ': 'G',
+      'ḡ': 'G', 'ģ': 'G', 'ĝ': 'G', 'ğ': 'G', 'ġ': 'G',
+      // H variations
+      'Ḥ': 'H', 'Ḧ': 'H', 'Ḩ': 'H', 'Ḫ': 'H', 'Ĥ': 'H', 'Ħ': 'H',
+      'ḥ': 'H', 'ḧ': 'H', 'ḩ': 'H', 'ḫ': 'H', 'ĥ': 'H', 'ħ': 'H',
+      // I variations
+      'Ī': 'I', 'Ĭ': 'I', 'Į': 'I', 'İ': 'I', 'Ì': 'I', 'Í': 'I', 'Î': 'I', 'Ï': 'I',
+      'ī': 'I', 'ĭ': 'I', 'į': 'I', 'ì': 'I', 'í': 'I', 'î': 'I', 'ï': 'I', 'ı': 'I',
+      // J variations
+      'Ĵ': 'J', 'ĵ': 'J',
+      // K variations
+      'Ķ': 'K', 'Ḱ': 'K', 'Ḳ': 'K', 'Ḵ': 'K',
+      'ķ': 'K', 'ḱ': 'K', 'ḳ': 'K', 'ḵ': 'K',
+      // L variations
+      'Ĺ': 'L', 'Ļ': 'L', 'Ľ': 'L', 'Ŀ': 'L', 'Ł': 'L', 'Ḷ': 'L', 'Ḹ': 'L', 'Ḻ': 'L', 'Ḽ': 'L',
+      'ĺ': 'L', 'ļ': 'L', 'ľ': 'L', 'ŀ': 'L', 'ł': 'L', 'ḷ': 'L', 'ḹ': 'L', 'ḻ': 'L', 'ḽ': 'L',
+      // M variations
+      'Ḿ': 'M', 'Ṁ': 'M', 'Ṃ': 'M',
+      'ḿ': 'M', 'ṁ': 'M', 'ṃ': 'M',
+      // N variations
+      'Ń': 'N', 'Ņ': 'N', 'Ň': 'N', 'Ŋ': 'N', 'Ñ': 'N', 'Ṅ': 'N', 'Ṇ': 'N', 'Ṉ': 'N', 'Ṋ': 'N',
+      'ń': 'N', 'ņ': 'N', 'ň': 'N', 'ŋ': 'N', 'ñ': 'N', 'ṅ': 'N', 'ṇ': 'N', 'ṉ': 'N', 'ṋ': 'N',
+      // O variations
+      'Ō': 'O', 'Ŏ': 'O', 'Ő': 'O', 'Ò': 'O', 'Ó': 'O', 'Ô': 'O', 'Õ': 'O', 'Ö': 'O', 'Ø': 'O', 'Ǫ': 'O',
+      'ō': 'O', 'ŏ': 'O', 'ő': 'O', 'ò': 'O', 'ó': 'O', 'ô': 'O', 'õ': 'O', 'ö': 'O', 'ø': 'O', 'ǫ': 'O',
+      // P variations
+      'Ṕ': 'P', 'Ṗ': 'P',
+      'ṕ': 'P', 'ṗ': 'P',
+      // R variations
+      'Ŕ': 'R', 'Ŗ': 'R', 'Ř': 'R', 'Ṙ': 'R', 'Ṛ': 'R', 'Ṝ': 'R', 'Ṟ': 'R',
+      'ŕ': 'R', 'ŗ': 'R', 'ř': 'R', 'ṙ': 'R', 'ṛ': 'R', 'ṝ': 'R', 'ṟ': 'R',
+      // S variations
+      'Ś': 'S', 'Ŝ': 'S', 'Ş': 'S', 'Š': 'S', 'Ṡ': 'S', 'Ṣ': 'S', 'Ṥ': 'S', 'Ṧ': 'S', 'Ṩ': 'S',
+      'ś': 'S', 'ŝ': 'S', 'ş': 'S', 'š': 'S', 'ṡ': 'S', 'ṣ': 'S', 'ṥ': 'S', 'ṧ': 'S', 'ṩ': 'S',
+      // T variations
+      'Ţ': 'T', 'Ť': 'T', 'Ŧ': 'T', 'Ṫ': 'T', 'Ṭ': 'T', 'Ṯ': 'T', 'Ṱ': 'T',
+      'ţ': 'T', 'ť': 'T', 'ŧ': 'T', 'ṫ': 'T', 'ṭ': 'T', 'ṯ': 'T', 'ṱ': 'T',
+      // U variations
+      'Ū': 'U', 'Ŭ': 'U', 'Ů': 'U', 'Ű': 'U', 'Ų': 'U', 'Ù': 'U', 'Ú': 'U', 'Û': 'U', 'Ü': 'U',
+      'ū': 'U', 'ŭ': 'U', 'ů': 'U', 'ű': 'U', 'ų': 'U', 'ù': 'U', 'ú': 'U', 'û': 'U', 'ü': 'U',
+      // V variations
+      'Ṽ': 'V', 'Ṿ': 'V',
+      'ṽ': 'V', 'ṿ': 'V',
+      // W variations
+      'Ŵ': 'W', 'Ẁ': 'W', 'Ẃ': 'W', 'Ẅ': 'W', 'Ẇ': 'W', 'Ẉ': 'W', 'Ẋ': 'W',
+      'ŵ': 'W', 'ẁ': 'W', 'ẃ': 'W', 'ẅ': 'W', 'ẇ': 'W', 'ẉ': 'W', 'ẋ': 'W',
+      // Y variations
+      'Ý': 'Y', 'Ŷ': 'Y', 'Ÿ': 'Y', 'Ỳ': 'Y', 'Ẏ': 'Y', 'Ỹ': 'Y',
+      'ý': 'Y', 'ŷ': 'Y', 'ÿ': 'Y', 'ỳ': 'Y', 'ẏ': 'Y', 'ỹ': 'Y',
+      // Z variations
+      'Ź': 'Z', 'Ż': 'Z', 'Ž': 'Z', 'Ẑ': 'Z', 'Ẓ': 'Z', 'Ẕ': 'Z',
+      'ź': 'Z', 'ż': 'Z', 'ž': 'Z', 'ẑ': 'Z', 'ẓ': 'Z', 'ẕ': 'Z'
+    };
+
+    const upperChar = char.toUpperCase();
+    return charMap[upperChar] || (upperChar.match(/[A-Z]/) ? upperChar : '#');
+  };
+
+  // Group books by first letter (normalized)
   const groupedBooks = booksArray.reduce((groups, book) => {
     const title = getBookTitle(book);
-    const firstLetter = title.charAt(0).toUpperCase();
-    const letter = /[A-Z]/.test(firstLetter) ? firstLetter : '#';
+    const firstLetter = title.charAt(0);
+    const normalizedLetter = normalizeToEnglishLetter(firstLetter);
 
-    if (!groups[letter]) {
-      groups[letter] = [];
+    if (!groups[normalizedLetter]) {
+      groups[normalizedLetter] = [];
     }
-    groups[letter].push(book);
+    groups[normalizedLetter].push(book);
     return groups;
   }, {});
 
@@ -61,14 +139,6 @@ const BookSlider = ({ books, loading, error, onBookSelect, selectedBookId, onRet
 
   // Get available tabs (letters that have books)
   const availableTabs = Object.keys(groupedBooks).sort();
-
-  // Filter books based on search term
-  const getFilteredBooks = (books) => {
-    if (!searchTerm) return books;
-    return books.filter(book =>
-      getBookTitle(book).toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  };
 
   const handleBookClick = (book) => {
     onBookSelect(book);
