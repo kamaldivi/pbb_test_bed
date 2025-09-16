@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  pbb-frontend:
+    build:
+      context: ./pbb-frontend
+      dockerfile: Dockerfile
+    container_name: pbb-frontend
+    restart: unless-stopped
+    networks:
+      - pbb-network
+
+  nginx-ssl:
+    image: nginx:alpine
+    container_name: nginx-ssl
+    restart: unless-stopped
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/nginx-ssl.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - pbb-frontend
+    networks:
+      - pbb-network
+
+networks:
+  pbb-network:
+    driver: bridge
