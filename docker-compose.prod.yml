@@ -40,7 +40,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx/nginx-ssl.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
+      - ~/pbb-certs/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       pbb-frontend:
         condition: service_healthy
@@ -64,6 +64,7 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
 
 networks:
   pbb-network:

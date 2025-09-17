@@ -69,7 +69,7 @@ const ContentDisplay = ({ content, loading, error, bookId, pageNumber, pageLabel
             </svg>
           </div>
           <h3 className="text-sm font-bold text-slate-800">
-            Extracted Content from Page Label - {pageLabel || `Page ${pageNumber}`}
+            Extracted Content - Page Label : {pageLabel || `Page ${pageNumber}`}
           </h3>
         </div>
       </div>

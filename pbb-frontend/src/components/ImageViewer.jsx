@@ -47,7 +47,7 @@ const ImageViewer = ({ bookId, pageNumber, pageLabel }) => {
         <div className="bg-gray-50 px-3 py-2 border-b">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-800">
-             Image View from the Orginal Book for Page Label - {pageLabel || `Page ${pageNumber}`}
+             Orginal Book - Page Label : {pageLabel || `Page ${pageNumber}`}
             </h3>
             <button
               onClick={toggleFullscreen}
